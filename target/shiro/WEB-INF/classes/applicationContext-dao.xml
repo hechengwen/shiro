@@ -58,5 +58,6 @@
         </tx:attributes>
     </tx:advice>
 
+    <!--aop注解扫描-->
     <aop:aspectj-autoproxy />
 </beans>

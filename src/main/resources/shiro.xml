@@ -48,6 +48,8 @@
                 <!-- anon表示此地址不需要任何权限即可访问 -->
                 /static/**=anon
                 /batchInsert=anon
+                /api/receive=anon
+                /api/receiveStr=anon
                 /login=anon
                 /index=anon
                 /doLogin=anon

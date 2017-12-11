@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Copyright (C), 2017，jumore Tec.
@@ -28,5 +29,5 @@ public class User implements Serializable{
     private String address;
     private String idCard;
     private String sex;
-    private String createTime;
+    private Date createTime;
 }

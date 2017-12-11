@@ -61,6 +61,7 @@ public class ApiController {
         logger.info("签名验签成功！,sign={}", sign);
         // 公钥解密数据
         byte bytes[] = RSAEncrypt.decrypt(RSAEncrypt.loadPublicKeyByStr(RSAEncrypt.loadPublicKeyByFile(filepath)),Base64.decode(cipher));
+        logger.info("解密数据为：{}",new String(bytes));
         return new String(bytes);
     }
 

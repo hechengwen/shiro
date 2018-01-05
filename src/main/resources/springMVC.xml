@@ -16,8 +16,12 @@
         <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
 
-    <task:annotation-driven scheduler="myScheduler"/>
-    <task:scheduler id="myScheduler" pool-size="20"/>
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/annoTest"/>
+            <bean class="shiro.hcw.interceptor.AnnocationInterceptor"> </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
     <!--避免IE执行AJAX时，返回JSON出现下载文件 -->
     <bean id="mappingJacksonHttpMessageConverter"

@@ -11,7 +11,8 @@
     <title>登陆成功首页</title>
 </head>
 <body>
-欢迎光临:${data.realName}
+欢迎光临:${user.realName}
+${user}
 
 <div><br><input id="but" value="退出" type="button" onclick="toLogin()" /></div>
 

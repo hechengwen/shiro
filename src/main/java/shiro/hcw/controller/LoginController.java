@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import shiro.hcw.anno.LoginRequired;
 import shiro.hcw.pojo.User;
 import shiro.hcw.restful.RestData;
 import shiro.hcw.service.UserService;
@@ -34,6 +35,14 @@ public class LoginController {
 
     @Autowired
     UserService userService;
+
+    @RequestMapping("annoTest")
+    @ResponseBody
+    @LoginRequired(value = "login")
+    public String annoTest(){
+        logger.info("登录校验的注解验证通过，登录成功！");
+        return "login success";
+    }
 
     /**
      * 登陆页
@@ -69,7 +78,7 @@ public class LoginController {
         token.setRememberMe(true);
         SecurityUtils.getSubject().login(token);
 
-        model.addObject("data",user);
+        model.addObject("user",user);
         return model;
     }
 

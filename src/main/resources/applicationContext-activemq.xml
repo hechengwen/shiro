@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.15.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+    <!--  <amq:connectionFactory id="amqConnectionFactory"
+                             brokerURL="tcp://127.0.0.1:61616"
+                             userName="admin"
+                             password="admin"/>-->
+
+    <!-- 如果连接网络：tcp://ip:61616；未连接网络：tcp://localhost:61616 以及用户名，密码-->
+    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://127.0.0.1:61616"/>
+        <property name="userName" value="admin"/>
+        <property name="password" value="admin"/>
+        <property name="trustedPackages">
+            <list>
+                <!-- you must add the package or parent-package of object which is put in ObjectMessage -->
+                <value>java.lang</value>
+                <value>java.sql</value>
+                <value>java.util</value>
+                <value>shiro.hcw.pojo</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 配置JMS连接工厂 -->
+    <bean id="connectionFactory"
+          class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory"/>
+        <property name="sessionCacheSize" value="100"/>
+    </bean>
+
+    <!-- 定义消息队列（Queue） -->
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- 设置消息队列的名字 -->
+        <constructor-arg>
+            <value>ActiveMQ-test</value>
+        </constructor-arg>
+    </bean>
+
+    <!-- 配置JMS模板（Queue），Spring提供的JMS工具类，它发送、接收消息。 -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="defaultDestination" ref="destination"/>
+        <property name="receiveTimeout" value="10000"/>
+        <!-- true是topic，false是queue，默认是false，此处显示写出false -->
+        <property name="pubSubDomain" value="false"/>
+    </bean>
+
+    <!-- 配置消息队列监听者（Queue） -->
+    <bean id="queueMessageListener" class="shiro.hcw.mq.QueueMessageListener"/>
+
+    <!-- 显示注入消息监听容器（Queue），配置连接工厂，监听的目标是demoQueueDestination，监听器是上面定义的监听器 -->
+    <bean id="queueListenerContainer"
+          class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="destination" ref="destination"/>
+        <property name="messageListener" ref="queueMessageListener"/>
+    </bean>
+
+    <!-- 还可以这样配置 -->
+    <!-- 定义Queue监听器 -->
+    <!--<jms:listener-container destination-type="queue" container-type="default" connection-factory="connectionFactory" acknowledge="auto">
+        <jms:listener destination="test.queue" ref="queueMessageListener"/>
+        <jms:listener destination="test.queue" ref="queueMessageListener"/>
+    </jms:listener-container>-->
+
+    <!-- 定义Topic监听器 -->
+    <!--<jms:listener-container destination-type="topic" container-type="default" connection-factory="connectionFactory" acknowledge="auto">
+        <jms:listener destination="test.topic" ref="queueMessageListener"/>
+        <jms:listener destination="test.topic" ref="queueMessageListener"/>
+    </jms:listener-container>-->
+</beans>

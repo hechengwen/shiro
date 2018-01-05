@@ -19,6 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements Serializable{
+    private static final long serialVersionUID = 2504467948968634865L;
     private String userId;
     private String userName;
     private String password;
